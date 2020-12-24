@@ -3,16 +3,21 @@ import 'moment/locale/cs'
 import 'moment/locale/de'
 import 'moment/locale/es'
 import 'moment/locale/fr'
+import 'moment/locale/zh-cn'
+import 'moment/locale/zh-hk'
+import 'moment/locale/zh-mo'
+import 'moment/locale/zh-tw'
 
 import text_cs from './text_cs'
 import text_de from './text_de'
 import text_en from './text_en'
 import text_es from './text_es'
 import text_fr from './text_fr'
+import text_zh from './text_zh'
 
 
-export type Locale = 'cs' | 'de' | 'en' | 'es' | 'fr'
-export const locales = [ 'cs', 'de', 'en', 'es', 'fr' ]
+export type Locale = 'cs' | 'de' | 'en' | 'es' | 'fr' | 'zh'
+export const locales = [ 'cs', 'de', 'en', 'es', 'fr', 'zh' ]
 
 export const fallbackLocale: Locale = 'en'
 export type I18nKey = keyof typeof text_en
@@ -23,6 +28,7 @@ const textsByLang: { [K in Locale]: { [K in I18nKey]?: string } } = {
     en: text_en,
     es: text_es,
     fr: text_fr,
+    zh: text_zh,
 }
 
 const msgFormatRe = /\{(\d+)\}/g
