@@ -12,7 +12,7 @@ import { setDetailPhotoByIndex, setPreviousDetailPhoto, setNextDetailPhoto } fro
 import { updatePhotoWork, movePhotosToTrash, setPhotosFlagged, restorePhotosFromTrash } from 'app/controller/PhotoController'
 import { setPhotoTags } from 'app/controller/PhotoTagController'
 import { openExportAction, openDiffAction } from 'app/state/actions'
-import { getPhotoById, getPhotoByIndex, getLoadedSectionById, getTagTitles } from 'app/state/selectors'
+import { getPhotoById, getNextPhoto, getPrevPhoto, getTagTitles } from "app/state/selectors"
 import { AppState } from 'app/state/StateTypes'
 import BackgroundClient from 'app/BackgroundClient'
 
@@ -161,19 +161,22 @@ const Connected = connect<StateProps, DispatchProps, OwnProps, AppState>(
     (state: AppState, props) => {
         const currentPhoto = state.detail!.currentPhoto
         const sectionId = currentPhoto.sectionId
-        const section = getLoadedSectionById(state, sectionId)
+
+        const photoPrev = getPrevPhoto(state, sectionId, currentPhoto.photoIndex)?.photo || null
+        const photoNext = getNextPhoto(state, sectionId, currentPhoto.photoIndex)?.photo || null
+
         return {
             ...props,
             devicePixelRatio: state.navigation.devicePixelRatio,
             sectionId: currentPhoto.sectionId,
             photo: getPhotoById(state, sectionId, currentPhoto.photoId)!,
-            photoPrev: getPhotoByIndex(state, sectionId, currentPhoto.photoIndex - 1),
-            photoNext: getPhotoByIndex(state, sectionId, currentPhoto.photoIndex + 1),
+            photoPrev,
+            photoNext,
             photoDetail: currentPhoto.photoDetail,
             photoWork: currentPhoto.photoWork,
             tags: getTagTitles(state),
-            isFirst: currentPhoto.photoIndex === 0,
-            isLast: !section || currentPhoto.photoIndex === section.photoIds.length - 1
+            isFirst: !photoPrev,
+            isLast: !photoNext,
         }
     },
     dispatch => ({

@@ -127,12 +127,16 @@ const sections = (state: SectionsState = initialSectionsState, action: Action): 
                 const section = nextSectionById[sectionId]
                 if (section) {
                     const photoSet = photoSets[i]
+                    if(photoSet){
                     const nextSection: LoadedPhotoSection = {
                         ...section,
                         ...photoSet,
                         count: photoSet.photoIds.length,  // Should be correct already, but we set it just in case
                     }
-                    nextSectionById[sectionId] = nextSection
+                    nextSectionById[sectionId] = nextSection} else {
+                        console.warn(`photosets[${i}] is null`, sectionIds, photoSets);
+                        
+                    }
                 }
             }
             return {

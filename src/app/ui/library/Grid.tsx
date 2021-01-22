@@ -206,13 +206,13 @@ export default class Grid extends React.Component<Props, State> {
 
     private moveHighlight(move: 'left' | 'right' | 'up' | 'down') {
         const { props } = this
-        const { selectedSectionId } = props
+        let { selectedSectionId } = props
 
         if (!selectedSectionId) {
             return
         }
 
-        const selectedSection = props.sectionById[selectedSectionId]
+        let selectedSection = props.sectionById[selectedSectionId]
         if (!isLoadedPhotoSection(selectedSection)) {
             return
         }
@@ -221,8 +221,22 @@ export default class Grid extends React.Component<Props, State> {
 
         let nextPhotoIndex = currentPhotoIndex
         if (move === 'left' || move === 'right') {
-            nextPhotoIndex = currentPhotoIndex + (move === 'left' ? -1 : 1)
+            const delta = move === 'left' ? -1 : 1
+            nextPhotoIndex = currentPhotoIndex + delta
+
+            // If this is the first/last photo of the section, jump to prev/next section
+            if(!selectedSection.photoIds[nextPhotoIndex]) {
+                selectedSectionId = props.sectionIds[props.sectionIds.indexOf(selectedSectionId) + delta]
+
+                selectedSection = props.sectionById[selectedSectionId]
+                if(!selectedSectionId || !isLoadedPhotoSection(selectedSection)) {
+                    return
+                }
+                nextPhotoIndex = move === 'left' ? selectedSection.photoIds.length - 1 : 0;
+            }
         } else if (this.gridLayout) {
+            // Up/down arrow pressed. If  the selected section has images in more than one row,
+            // calculate which image to select.
             const selectedSectionIndex = props.sectionIds.indexOf(selectedSectionId)
             const sectionLayout = this.gridLayout.sectionLayouts[selectedSectionIndex]
             if (sectionLayout && sectionLayout.boxes) {

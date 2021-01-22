@@ -1,6 +1,14 @@
 {
+    // exclude these files from vscode search
     "files.exclude": {
         "submodules/**": true,
         "src/app/style/fonts/**": true
     },
+    // format the source files on save, but only the modified lines, to prevent clutter
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modifications",
+    // prevent clutter: do not trim trailing whitespace
+    // (the `modifications` mode does not apply to trimming)
+    "files.trimTrailingWhitespace": false,
+    "window.title": "${activeEditorMedium}${separator}${rootName}",
 }

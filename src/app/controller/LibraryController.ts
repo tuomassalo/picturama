@@ -41,7 +41,7 @@ export interface PhotoGridPosition {
     relativeY: number
     /**
      * The offset to apply (in pixels).
-     * 
+     *
      * This is normally `0`. Will be set to another value if the position is outside the photo
      * - so `relativeY` is either `0` or `1`.
      */
@@ -348,6 +348,9 @@ function forgetAndFetchSections(sectionIds: PhotoSectionId[], sectionById: Photo
             }
         }
     }
+
+     console.warn({ sectionIdsToForget, sectionIdsToLoad })
+
 
     if (sectionIdsToForget) {
         const nailedSectionIdsToForget = sectionIdsToForget

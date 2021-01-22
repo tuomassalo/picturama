@@ -5,8 +5,13 @@ import { assertRendererProcess } from 'common/util/ElectronUtil'
 
 import BackgroundClient from 'app/BackgroundClient'
 import { showError } from 'app/ErrorPresenter'
-import { setDetailPhotoAction, fetchDetailPhotoDataAction, closeDetailAction } from 'app/state/actions'
-import { getPhotoByIndex, getLoadedSectionById, getPhotoById } from 'app/state/selectors'
+import {
+    setDetailPhotoAction,
+    fetchDetailPhotoDataAction,
+    closeDetailAction,
+    fetchSectionPhotosAction,
+} from "app/state/actions"
+import { getPhotoByIndex, getPrevPhoto, getNextPhoto, getLoadedSectionById, getPhotoById } from "app/state/selectors"
 import store from 'app/state/store'
 import { AppState } from 'app/state/StateTypes'
 import SerialUpdater from 'app/util/SerialUpdater'
@@ -76,8 +81,9 @@ export function setPreviousDetailPhoto() {
     if (state.detail) {
         const currentPhoto = state.detail.currentPhoto
         const currentIndex = currentPhoto.photoIndex
-        if (currentIndex > 0) {
-            setDetailPhotoByIndex(currentPhoto.sectionId, currentIndex - 1)
+        const prevPhoto = getPrevPhoto(state, currentPhoto.sectionId, currentIndex)
+        if (prevPhoto) {
+            setDetailPhotoById(prevPhoto.section.id, prevPhoto.photo.id)
         }
     }
 }
@@ -87,9 +93,19 @@ export function setNextDetailPhoto() {
     if (state.detail) {
         const currentPhoto = state.detail.currentPhoto
         const currentIndex = currentPhoto.photoIndex
-        const section = getLoadedSectionById(state, currentPhoto.sectionId)
-        if (section && currentIndex < section.photoIds.length - 1) {
-            setDetailPhotoByIndex(currentPhoto.sectionId, currentIndex + 1)
+        const nextPhoto = getNextPhoto(state, currentPhoto.sectionId, currentIndex)
+        if (nextPhoto) {
+            setDetailPhotoById(nextPhoto.section.id, nextPhoto.photo.id)
+            if (nextPhoto.preloadSectionId) {
+                store.dispatch(
+                    fetchSectionPhotosAction(
+                        [nextPhoto.preloadSectionId],
+                        [
+                            /* ?? */
+                        ],
+                    ),
+                )
+            }
         }
     }
 }
